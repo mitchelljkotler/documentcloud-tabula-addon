@@ -1,5 +1,5 @@
 title: Tabula Spreadsheet Extraction (Beta)
-description: Have a PDF that used to be a spreadsheet? This Add-On runs the open source [Tabula library](https://tabula.technology) against a selected PDF and tries to identify and extract any spreadsheets it identifies. *Important:* Only run this Add-On against one document at a time.
+description: Have a PDF that used to be a spreadsheet? This Add-On runs the open source [Tabula library](https://tabula.technology) against a selected PDF and tries to identify and extract any spreadsheets it identifies. *Important:* Only run this Add-On against one document at a time. Tabula was created by Manuel Aristarán, Mike Tigas and Jeremy B. Merrill ([Read more](https://tabula.technology)). Add-On developed by MuckRock.
 type: object
 documents:
   - selected
