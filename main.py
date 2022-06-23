@@ -15,12 +15,15 @@ class Tabula(AddOn):
     def main(self):
 
         document = self.client.documents.get(self.documents[0])
+        with open(f"{document.slug}.pdf", "w") as pdf_file:
+            pdf_file.write(document.pdf)
+
         tabula.convert_into(
-            document.pdf_url, f"{document.slug}.csv", output_format="csv", pages="all"
+            f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all"
         )
 
-        with open(f"{document.slug}.csv") as file_:
-            self.upload_file(file_)
+        with open(f"{document.slug}.csv") as csv_file:
+            self.upload_file(csv_file)
 
 
 if __name__ == "__main__":
