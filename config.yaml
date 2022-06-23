@@ -1,5 +1,5 @@
-title: Tabula
-description: Convert tables in PDFs into CSVs
+title: Tabula Spreadsheet Extraction (Beta)
+description: Have a PDF that used to be a spreadsheet? This Add-On runs the open source [Tabula library](https://tabula.technology) against a selected PDF and tries to identify and extract any spreadsheets it identifies. *Important:* Only run this Add-On against one document at a time.
 type: object
 documents:
   - selected
