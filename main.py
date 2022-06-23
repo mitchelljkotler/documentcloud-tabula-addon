@@ -15,7 +15,7 @@ class Tabula(AddOn):
     def main(self):
 
         document = self.client.documents.get(self.documents[0])
-        with open(f"{document.slug}.pdf", "w") as pdf_file:
+        with open(f"{document.slug}.pdf", "wb") as pdf_file:
             pdf_file.write(document.pdf)
 
         tabula.convert_into(
