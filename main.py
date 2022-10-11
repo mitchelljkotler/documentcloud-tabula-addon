@@ -20,9 +20,7 @@ class Tabula(AddOn):
             with open("template.json", "wb") as template_file:
                 resp = requests.get(url)
                 template_file.write(resp.content)
-            with open(f"{document.slug}.pdf", "wb") as pdf_file:
-                pdf_file.write(document.pdf)
-            data_frame_list = tabula.read_pdf_with_template(document.pdf, "template.json")
+            data_frame_list = tabula.read_pdf_with_template(document.pdf_url, "template.json")
             for data_frame in data_frame_list:
                 data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
 
