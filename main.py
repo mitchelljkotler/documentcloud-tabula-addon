@@ -29,6 +29,8 @@ class Tabula(AddOn):
             data_frame_list = tabula.read_pdf_with_template("./file.pdf", "template.json")
             for data_frame in data_frame_list:
                 data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
+            with open(f"{document.slug}.csv") as csv_file:
+                self.upload_file(csv_file)
 
         else: 
             with open(f"{document.slug}.pdf", "wb") as pdf_file:
