@@ -14,6 +14,7 @@ class Tabula(AddOn):
     """A tabula Add-On for DocumentCloud"""
 
     def main(self):
+        document = self.client.documents.get(self.documents[0])
         url = self.data['url']
         if url is not None: 
             with open("template.json", "wb") as template_file
@@ -24,7 +25,6 @@ class Tabula(AddOn):
                 data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
 
         else: 
-            document = self.client.documents.get(self.documents[0])
             with open(f"{document.slug}.pdf", "wb") as pdf_file:
                 pdf_file.write(document.pdf)
             tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all")
