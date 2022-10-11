@@ -5,10 +5,12 @@ https://github.com/chezou/tabula-py
 It attempts to convert tables from PDFs to CSVs
 """
 
+import os.path
 import tabula
 import pandas
 import requests
 from documentcloud.addon import AddOn
+
 
 class Tabula(AddOn):
     """A tabula Add-On for DocumentCloud"""
@@ -20,7 +22,11 @@ class Tabula(AddOn):
             with open("template.json", "wb") as template_file:
                 resp = requests.get(url)
                 template_file.write(resp.content)
-            data_frame_list = tabula.read_pdf_with_template(document.canonical_url, "template.json")
+            pdf_name = f"{document.title}.pdf"
+            
+            with open("file.pdf", "wb") as pdf_file:
+                pdf_file.write(document.pdf)
+            data_frame_list = tabula.read_pdf_with_template("./file.pdf", "template.json")
             for data_frame in data_frame_list:
                 data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
 
