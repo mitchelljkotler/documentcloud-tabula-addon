@@ -17,7 +17,7 @@ class Tabula(AddOn):
         document = self.client.documents.get(self.documents[0])
         url = self.data['url']
         if url is not None: 
-            with open("template.json", "wb") as template_file
+            with open("template.json", "wb") as template_file:
                 resp = requests.get(url)
                 template_file.write(resp.content)
             data_frame_list = tabula.read_pdf_with_template(f"{document.slug}.pdf", "template.json")
