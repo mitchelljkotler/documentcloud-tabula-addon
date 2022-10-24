@@ -43,7 +43,7 @@ class Tabula(AddOn):
                 ext = "json"
             with requests.get(url, stream=True) as resp:
                 resp.raise_for_status()
-                with open(f"./out/{title}.{ext}", "wb") as json_file:
+                with open(f"./out/template.json", "wb") as json_file:
                     for chunk in resp.iter_content(chunk_size=8192):
                         json_file.write(chunk)
                  
