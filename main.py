@@ -30,7 +30,7 @@ class Tabula(AddOn):
             # private information
             stdout = sys.stdout
             sys.stdout = open(os.devnull, "w")
-            lootdl.grab(url, "./out/")
+            lootdl.grab(url, "./out/template.json")
             # restore stdout
             sys.stdout = stdout
         else:
