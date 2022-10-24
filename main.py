@@ -61,18 +61,19 @@ class Tabula(AddOn):
         with zipfile.ZipFile("export.zip", mode="w") as archive:
             for document in self.get_documents():
                 url = self.data["url"]
-                if url is not None:
+                if url is not None: #the if branch gets executed if a template is provided
                     self.fetch_files(url)
                     with open("file.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
                     data_frame_list = tabula.read_pdf_with_template(
                         "./file.pdf", "./out/template.json"
-                    )
+                    ) 
+                    # Tabula's read_pdf_with_template() returns a list of data frames we can append to form a CSV. 
                     for data_frame in data_frame_list:
                         data_frame.to_csv(
                             f"{document.slug}.csv", mode="a", index=False, header=False
                         )
-                else:
+                else: #the else branch gets executed if no template is provided. 
                     with open(f"{document.slug}.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
                     tabula.convert_into(
@@ -80,7 +81,7 @@ class Tabula(AddOn):
                         f"{document.slug}.csv",
                         output_format="csv",
                         pages="all",
-                    )
+                    ) # Tabula's convert_into() guesses boundaries for table extraction. 
                 archive.write(f"{document.slug}.csv")
         self.upload_file(open("export.zip"))
 
