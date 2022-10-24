@@ -35,7 +35,7 @@ class Tabula(AddOn):
             # restore stdout
             sys.stdout = stdout
             rename_file="cd out; mv * template.json"
-            subprocess.call(rename, shell=True)
+            subprocess.call(rename_file, shell=True)
             
         else:
             parsed_url = urlparse(url)
