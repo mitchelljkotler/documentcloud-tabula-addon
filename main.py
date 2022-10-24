@@ -11,6 +11,7 @@ import tabula
 import pandas
 import zipfile
 import requests
+import subprocess
 from urllib.parse import urlparse
 from documentcloud.addon import AddOn
 import lootdl
@@ -30,9 +31,12 @@ class Tabula(AddOn):
             # private information
             stdout = sys.stdout
             sys.stdout = open(os.devnull, "w")
-            lootdl.grab(url, "./out/template.json")
+            lootdl.grab(url, "./out/")
             # restore stdout
             sys.stdout = stdout
+            rename_file="cd out; mv * template.json"
+            subprocess.call(rename, shell=True)
+            
         else:
             parsed_url = urlparse(url)
             basename = os.path.basename(parsed_url.path)
@@ -54,7 +58,6 @@ class Tabula(AddOn):
                 if url is not None: 
                     self.fetch_files(url)
                     pdf_name = f"{document.title}.pdf"
-            
                     with open("file.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
                     data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
