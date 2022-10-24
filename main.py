@@ -57,7 +57,7 @@ class Tabula(AddOn):
             
                     with open("file.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
-                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "template.json")
+                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
                     for data_frame in data_frame_list:
                         data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
                 else: 
