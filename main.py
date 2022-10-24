@@ -30,18 +30,12 @@ class Tabula(AddOn):
                         pdf_file.write(document.pdf)
                     data_frame_list = tabula.read_pdf_with_template("./file.pdf", "template.json")
                     for data_frame in data_frame_list:
-                        csv = data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
-                    with archive.open(f"{document.slug}.csv", "w") as csv_file:
-                        csv_file.write(csv)
-                        
+                        data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
                 else: 
                     with open(f"{document.slug}.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
-                    csv = tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all")
-                    with archive.open(f"{document.slug}.csv", "w") as csv_file:
-                        csv_file.write(csv)
-                        
-        self.upload_file(open("export.zip"))
-
+                    tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all")
+                archive.write(f"{document.slug}.csv")
+            
 if __name__ == "__main__":
     Tabula().main()
