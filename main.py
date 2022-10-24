@@ -6,10 +6,11 @@ It allows you to export tables from a set of PDFs and allows you to download the
 """
 
 import os
+import sys
 import tabula
 import pandas
-import requests
 import zipfile
+import requests
 from urllib.parse import urlparse
 from documentcloud.addon import AddOn
 import lootdl
