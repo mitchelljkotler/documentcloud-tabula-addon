@@ -1,21 +1,23 @@
 """
 This is an Add-On for DocumentCloud which wraps the tabula-py library
 https://github.com/chezou/tabula-py
-
-It allows you to export tables from a set of PDFs and allows you to download the results as a zip file. 
+It allows you to export tables from a set of PDFs into CSVs and
+download the resulting CSVs as a zip file.
 """
 
 import os
 import sys
-import tabula
-import pandas
 import zipfile
-import requests
 import subprocess
 from urllib.parse import urlparse
+
+import requests
+import tabula
+
 from documentcloud.addon import AddOn
 import lootdl
 from lootdl import DROPBOX_URL, GDRIVE_URL, MEDIAFIRE_URL, WETRANSFER_URL
+
 
 class Tabula(AddOn):
     """A tabula Add-On for DocumentCloud"""
@@ -34,9 +36,9 @@ class Tabula(AddOn):
             lootdl.grab(url, "./out/")
             # restore stdout
             sys.stdout = stdout
-            rename_file="cd out; mv * template.json"
+            rename_file = "cd out; mv * template.json"
             subprocess.call(rename_file, shell=True)
-            
+
         else:
             parsed_url = urlparse(url)
             basename = os.path.basename(parsed_url.path)
@@ -45,29 +47,43 @@ class Tabula(AddOn):
                 title = "template"
             if not ext:
                 ext = "json"
-            with requests.get(url, stream=True) as resp:
+            with requests.get(url, stream=True, timeout=10) as resp:
                 resp.raise_for_status()
-                with open(f"./out/template.json", "wb") as json_file:
+                with open("./out/template.json", "wb") as json_file:
                     for chunk in resp.iter_content(chunk_size=8192):
                         json_file.write(chunk)
-                 
+
     def main(self):
+        """If a template is provided, it extracts dataframes from the PDF(s)
+        using that template and appends it to a CSV for each document and returns
+        a zip file of all the CSVs. If no template is provided, it guesses
+        the boundaries for each file"""
         with zipfile.ZipFile("export.zip", mode="w") as archive:
             for document in self.get_documents():
-                url = self.data['url']
-                if url is not None: 
+                url = self.data["url"]
+                if url is not None:
                     self.fetch_files(url)
-                    pdf_name = f"{document.title}.pdf"
                     with open("file.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
-                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
+                    data_frame_list = tabula.read_pdf_with_template(
+                        "./file.pdf", "./out/template.json"
+                    )
                     for data_frame in data_frame_list:
-                        data_frame.to_csv(f"{document.slug}.csv", mode='a', index=False, header=False)
-                else: 
+                        data_frame.to_csv(
+                            f"{document.slug}.csv", mode="a", index=False, header=False
+                        )
+                else:
                     with open(f"{document.slug}.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
-                    tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all")
+                    tabula.convert_into(
+                        f"{document.slug}.pdf",
+                        f"{document.slug}.csv",
+                        output_format="csv",
+                        pages="all",
+                    )
                 archive.write(f"{document.slug}.csv")
         self.upload_file(open("export.zip"))
+
+
 if __name__ == "__main__":
     Tabula().main()
