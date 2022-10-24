@@ -36,6 +36,6 @@ class Tabula(AddOn):
                         pdf_file.write(document.pdf)
                     tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all")
                 archive.write(f"{document.slug}.csv")
-            
+        self.upload_file(open("export.zip"))
 if __name__ == "__main__":
     Tabula().main()
