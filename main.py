@@ -59,29 +59,23 @@ class Tabula(AddOn):
         a zip file of all the CSVs. If no template is provided, it guesses
         the boundaries for each file"""
         with zipfile.ZipFile("export.zip", mode="w") as archive:
+            url = self.data["url"]
+            self.fetch_files(url)
             for document in self.get_documents():
-                url = self.data["url"]
                 if url is not None: #the if branch gets executed if a template is provided
-                    self.fetch_files(url)
                     with open("file.pdf", "wb") as pdf_file:
                         pdf_file.write(document.pdf)
-                    data_frame_list = tabula.read_pdf_with_template(
-                        "./file.pdf", "./out/template.json"
-                    ) 
+                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json") 
                     # Tabula's read_pdf_with_template() returns a list of data frames we can append to form a CSV. 
                     for data_frame in data_frame_list:
                         data_frame.to_csv(
                             f"{document.slug}.csv", mode="a", index=False, header=False
                         )
                 else: #the else branch gets executed if no template is provided. 
-                    with open(f"{document.slug}.pdf", "wb") as pdf_file:
+                    with open(f"{document.slug}.pdf", "wb") as pdf_file: 
                         pdf_file.write(document.pdf)
-                    tabula.convert_into(
-                        f"{document.slug}.pdf",
-                        f"{document.slug}.csv",
-                        output_format="csv",
-                        pages="all",
-                    ) # Tabula's convert_into() guesses boundaries for table extraction. 
+                    tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all",) 
+                    # Tabula's convert_into() guesses boundaries for table extraction. 
                 archive.write(f"{document.slug}.csv")
         self.upload_file(open("export.zip"))
 
