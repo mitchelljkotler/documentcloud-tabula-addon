@@ -15,8 +15,8 @@ import requests
 import tabula
 
 from documentcloud.addon import AddOn
-from clouddl import *
-from clouddl.clouddl import dropbox_url, gdrive_url
+from clouddl import grab
+from clouddl import dropbox_url, gdrive_url
 
 
 class Tabula(AddOn):
