@@ -15,7 +15,7 @@ import requests
 import tabula
 
 from documentcloud.addon import AddOn
-import clouddl
+from clouddl import *
 from clouddl.clouddl import dropbox_url, gdrive_url
 
 
@@ -29,11 +29,11 @@ class Tabula(AddOn):
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
         cloud_urls = [dropbox_url, gdrive_url]
         if any(cloud_url in url for cloud_url in cloud_urls):
-            # surpress output during lootdl download to avoid leaking
+            # surpress output during download to avoid leaking
             # private information
             stdout = sys.stdout
             sys.stdout = open(os.devnull, "w")
-            lootdl.grab(url, "./out/")
+            grab(url, "./out/")
             # restore stdout
             sys.stdout = stdout
             rename_file = "cd out; mv * template.json"
