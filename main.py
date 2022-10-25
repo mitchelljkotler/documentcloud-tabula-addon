@@ -16,26 +16,20 @@ import tabula
 
 from documentcloud.addon import AddOn
 from clouddl import grab
-from clouddl import dropbox_url, gdrive_url
+from clouddl import DROPBOX_URL, GDRIVE_URL
 
 
 class Tabula(AddOn):
     """A tabula Add-On for DocumentCloud"""
 
     def fetch_files(self, url):
-        """Fetch the files from either a cloud share link or any public URL"""
+        """Fetch the files from either Dropbox, Google Drive, or any public URL"""
         self.set_message("Downloading the files...")
 
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
-        cloud_urls = [dropbox_url, gdrive_url]
+        cloud_urls = [DROPBOX_URL, GDRIVE_URL]
         if any(cloud_url in url for cloud_url in cloud_urls):
-            # surpress output during download to avoid leaking
-            # private information
-            stdout = sys.stdout
-            sys.stdout = open(os.devnull, "w")
             grab(url, "./out/")
-            # restore stdout
-            sys.stdout = stdout
             rename_file = "cd out; mv * template.json"
             subprocess.call(rename_file, shell=True)
 
