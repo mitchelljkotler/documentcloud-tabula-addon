@@ -15,8 +15,8 @@ import requests
 import tabula
 
 from documentcloud.addon import AddOn
-import lootdl
-from lootdl import DROPBOX_URL, GDRIVE_URL, MEDIAFIRE_URL, WETRANSFER_URL
+import clouddl
+from clouddl import DROPBOX_URL, GDRIVE_URL, MEDIAFIRE_URL, WETRANSFER_URL
 
 
 class Tabula(AddOn):
