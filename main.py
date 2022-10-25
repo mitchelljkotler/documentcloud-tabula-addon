@@ -27,7 +27,7 @@ class Tabula(AddOn):
         self.set_message("Downloading the files...")
 
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
-        cloud_urls = [DROPBOX_URL, GDRIVE_URL, MEDIAFIRE_URL, WETRANSFER_URL]
+        cloud_urls = [dropbox_url, gdrive_url]
         if any(cloud_url in url for cloud_url in cloud_urls):
             # surpress output during lootdl download to avoid leaking
             # private information
