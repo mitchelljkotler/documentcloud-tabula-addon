@@ -16,7 +16,7 @@ import tabula
 
 from documentcloud.addon import AddOn
 import clouddl
-from clouddl import DROPBOX_URL, GDRIVE_URL, MEDIAFIRE_URL, WETRANSFER_URL
+from clouddl.clouddl import DROPBOX_URL, GDRIVE_URL, MEDIAFIRE_URL, WETRANSFER_URL
 
 
 class Tabula(AddOn):
