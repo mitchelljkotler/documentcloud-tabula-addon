@@ -1,7 +1,7 @@
 
 # DocumentCloud Tabula Add-On
 
-This is an add-on for [DocumentCloud](https://documentcloud.org) which wraps the [tabula-py](https://github.com/chezou/tabula-py) library
+This is an add-on for [DocumentCloud](https://documentcloud.org) which wraps the [tabula-py](https://github.com/chezou/tabula-py) library.
 
 It allows you to export tables from a set of PDFs into CSVs and download the resulting CSVs as a zip file. 
 You can provide a link to a template generated from the [Tabula Desktop Application](https://tabula.technology)
