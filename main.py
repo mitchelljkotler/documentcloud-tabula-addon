@@ -76,8 +76,9 @@ class Tabula(AddOn):
         """
         try:
             url = self.data["url"]
-        except APIError as exc:
+        except Exception as exc:
             url = None
+
         if url is not None:
             self.template_based_extract(url)
         else:
