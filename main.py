@@ -62,7 +62,8 @@ class Tabula(AddOn):
     def template_less_extract(self):
         with zipfile.ZipFile("export.zip", mode="w") as archive:
             for document in self.get_documents():
-                pdf_file.write(document.pdf)
+                with open("file.pdf", "wb") as pdf_file:
+                    pdf_file.write(document.pdf)
                 tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all",) 
                 # Tabula's convert_into() guesses boundaries for table extraction. 
                 archive.write(f"{document.slug}.csv")
