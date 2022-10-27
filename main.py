@@ -55,7 +55,7 @@ class Tabula(AddOn):
                     # Tabula's read_pdf_with_template() returns a list of data frames we can append to form a CSV. 
                     for data_frame in data_frame_list:
                         data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
-                archive.write(f"{document.slug}.csv")
+                    archive.write(f"{document.slug}.csv")
         else:
             self.template_less_extract()
     
@@ -65,7 +65,7 @@ class Tabula(AddOn):
                 pdf_file.write(document.pdf)
                 tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all",) 
                 # Tabula's convert_into() guesses boundaries for table extraction. 
-            archive.write(f"{document.slug}.csv")
+                archive.write(f"{document.slug}.csv")
 
     def main(self):
         """
