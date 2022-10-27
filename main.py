@@ -64,7 +64,7 @@ class Tabula(AddOn):
             for document in self.get_documents():
                 with open("file.pdf", "wb") as pdf_file:
                     pdf_file.write(document.pdf)
-                tabula.convert_into(f"{document.slug}.pdf", f"{document.slug}.csv", output_format="csv", pages="all",) 
+                tabula.convert_into("file.pdf", f"{document.slug}.csv", output_format="csv", pages="all",) 
                 # Tabula's convert_into() guesses boundaries for table extraction. 
                 archive.write(f"{document.slug}.csv")
 
