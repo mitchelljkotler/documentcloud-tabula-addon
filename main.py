@@ -56,7 +56,7 @@ class Tabula(AddOn):
                         data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
                 archive.write(f"{document.slug}.csv")
         else:
-            self.template_less_extract():
+            self.template_less_extract()
     
     def template_less_extract(self):
         with zipfile.ZipFile("export.zip", mode="w") as archive:
