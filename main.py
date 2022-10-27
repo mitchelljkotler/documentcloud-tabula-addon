@@ -16,8 +16,6 @@ import tabula
 
 from documentcloud.addon import AddOn
 from clouddl import grab
-from clouddl import DROPBOX_URL, GDRIVE_URL
-
 
 class Tabula(AddOn):
     """A tabula Add-On for DocumentCloud"""
@@ -48,10 +46,12 @@ class Tabula(AddOn):
                         json_file.write(chunk)
 
     def main(self):
-        """If a template is provided, it extracts dataframes from the PDF(s)
+        """
+        If a template is provided, it extracts dataframes from the PDF(s)
         using that template and appends it to a CSV for each document and returns
         a zip file of all the CSVs. If no template is provided, it guesses
-        the boundaries for each file"""
+        the boundaries for each file
+        """
         with zipfile.ZipFile("export.zip", mode="w") as archive:
             url = self.data["url"]
             self.fetch_files(url)
@@ -63,8 +63,7 @@ class Tabula(AddOn):
                     # Tabula's read_pdf_with_template() returns a list of data frames we can append to form a CSV. 
                     for data_frame in data_frame_list:
                         data_frame.to_csv(
-                            f"{document.slug}.csv", mode="a", index=False, header=False
-                        )
+                            f"{document.slug}.csv", mode="a", index=False, header=False)
                 else: #the else branch gets executed if no template is provided. 
                     with open(f"{document.slug}.pdf", "wb") as pdf_file: 
                         pdf_file.write(document.pdf)
