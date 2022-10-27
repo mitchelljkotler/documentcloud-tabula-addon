@@ -7,30 +7,26 @@ download the resulting CSVs as a zip file.
 
 import os
 import sys
+import fnmatch
 import zipfile
 import subprocess
 from urllib.parse import urlparse
-
 import requests
 import tabula
-
 from documentcloud.addon import AddOn
 from clouddl import grab
 
 class Tabula(AddOn):
-    """A tabula Add-On for DocumentCloud"""
+    """A tabula PDF table extraction Add-On for DocumentCloud"""
 
-    def fetch_files(self, url):
+    def fetch_template(self, url):
         """Fetch the files from either Dropbox, Google Drive, or any public URL"""
-        self.set_message("Downloading the files...")
-
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
-        cloud_urls = [DROPBOX_URL, GDRIVE_URL]
-        if any(cloud_url in url for cloud_url in cloud_urls):
-            grab(url, "./out/")
-            rename_file = "cd out; mv * template.json"
-            subprocess.call(rename_file, shell=True)
-
+        if(grab(url, "./out/")):
+            for file in os.listdir('./out/'):
+                if fnmatch.fnmatch(file, '*.json'):
+                   os.rename(file, 'template.json')
+                   return True
         else:
             parsed_url = urlparse(url)
             basename = os.path.basename(parsed_url.path)
@@ -40,10 +36,14 @@ class Tabula(AddOn):
             if not ext:
                 ext = "json"
             with requests.get(url, stream=True, timeout=10) as resp:
-                resp.raise_for_status()
-                with open("./out/template.json", "wb") as json_file:
-                    for chunk in resp.iter_content(chunk_size=8192):
-                        json_file.write(chunk)
+                if resp.status_code == 200:
+                    with open("./out/template.json", "wb") as json_file:
+                        for chunk in resp.iter_content(chunk_size=8192):
+                            json_file.write(chunk)
+                     return True
+                else:
+                    return False
+           
 
     def main(self):
         """
@@ -52,9 +52,9 @@ class Tabula(AddOn):
         a zip file of all the CSVs. If no template is provided, it guesses
         the boundaries for each file
         """
+        url = self.data["url"]
+        self.fetch_template(url)
         with zipfile.ZipFile("export.zip", mode="w") as archive:
-            url = self.data["url"]
-            self.fetch_files(url)
             for document in self.get_documents():
                 if url is not None: #the if branch gets executed if a template is provided
                     with open("file.pdf", "wb") as pdf_file:
