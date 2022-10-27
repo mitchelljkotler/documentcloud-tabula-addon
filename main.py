@@ -40,7 +40,7 @@ class Tabula(AddOn):
                     with open("./out/template.json", "wb") as json_file:
                         for chunk in resp.iter_content(chunk_size=8192):
                             json_file.write(chunk)
-                     return True
+                    return True
                 else:
                     return False
            
