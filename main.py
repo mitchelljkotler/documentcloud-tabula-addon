@@ -74,7 +74,10 @@ class Tabula(AddOn):
         a zip file of all the CSVs. If no template is provided, it guesses
         the boundaries for each file
         """
-        url = self.data['url'] or None
+        try:
+            url = self.data["url"]
+        except APIError as exc:
+            url = None
         if url is not None:
             self.template_based_extract(url)
         else:
