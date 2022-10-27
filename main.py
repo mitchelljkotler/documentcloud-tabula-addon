@@ -25,7 +25,7 @@ class Tabula(AddOn):
         if(grab(url, "./out/")):
             for file in os.listdir('./out/'):
                 if fnmatch.fnmatch(file, '*.json'):
-                   template_download_path = os.path.join('./out/', file)
+                   template_path = os.path.join('./out/', file)
                    os.rename(template_path, os.path.join('./out/', 'template.json'))
                    return True
         else:
