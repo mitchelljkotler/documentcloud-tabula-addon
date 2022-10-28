@@ -38,20 +38,19 @@ class Tabula(AddOn):
 
     def template_based_extract(self, url):
         """This will run tabula's extraction with a template you provided"""
-        self.fetch_template(url)
-        with zipfile.ZipFile("export.zip", mode="w") as archive:
-            for document in self.get_documents():
-                with open("file.pdf", "wb") as pdf_file:
-                    pdf_file.write(document.pdf)
-                data_frame_list = tabula.read_pdf_with_template(
-                    "./file.pdf", "./out/template.json"
-                )
-                # Tabula's read_pdf_with_template() returns data frame list to append to CSV
-                for data_frame in data_frame_list:
-                    data_frame.to_csv(
-                        f"{document.slug}.csv", mode="a", index=False, header=False
-                    )
-                archive.write(f"{document.slug}.csv")
+        if(self.fetch_template(url)):
+            with zipfile.ZipFile("export.zip", mode="w") as archive:
+                for document in self.get_documents():
+                    with open("file.pdf", "wb") as pdf_file:
+                        pdf_file.write(document.pdf)
+                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
+                    # Tabula's read_pdf_with_template() returns data frame list to append to CSV
+                    for data_frame in data_frame_list:
+                        data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
+                    archive.write(f"{document.slug}.csv")
+       else:
+            self.set_message("No valid JSON tabula template was found in the URL provided, exiting...")
+            sys.exit(1)
 
     def template_less_extract(self):
         """If no template is provided, tabula will guess the boundaries of the tables"""
