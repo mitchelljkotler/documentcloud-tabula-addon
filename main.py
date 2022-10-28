@@ -22,7 +22,6 @@ class Tabula(AddOn):
         """Fetch the template from either Dropbox or Google Drive"""
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
         downloaded = grab(url, "./out/")
-        print(downloaded)
         if downloaded:
             for file in os.listdir("./out/"):
                 if fnmatch.fnmatch(file, "*.json"):
