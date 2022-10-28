@@ -7,13 +7,11 @@ download the resulting CSVs as a zip file.
 
 import os
 import sys
-import time
 import fnmatch
 import zipfile
 import tabula
 from documentcloud.addon import AddOn
 from clouddl import grab
-
 
 class Tabula(AddOn):
     """A tabula PDF table extraction Add-On for DocumentCloud"""
@@ -21,16 +19,20 @@ class Tabula(AddOn):
     def fetch_template(self, url):
         """Fetch the template from either Dropbox or Google Drive"""
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
-        if grab(url, "./out/"):
+        downloaded = grab(url, "./out/")
+        if downloaded:
             for file in os.listdir("./out/"):
                 if fnmatch.fnmatch(file, "*.json"):
                     template_path = os.path.join("./out/", file)
                     os.rename(template_path, os.path.join("./out/", "template.json"))
                     return True
-        self.set_message(
-            "No valid JSON tabula template was found in the URL provided, exiting..."
-        )
-        time.sleep(3)
+        else:
+            resp = requests.get(url)
+            if resp.status_code == 200:
+                with open("./out/template.json", "w") as json_file:
+                    json_file.write(resp.text)
+                return True
+        self.set_message("No valid JSON tabula template was found in the URL provided, exiting...")
         sys.exit(1)
 
     def template_based_extract(self, url):
