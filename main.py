@@ -29,7 +29,7 @@ class Tabula(AddOn):
                     template_path = os.path.join('./out/', file)
                     os.rename(template_path, os.path.join('./out/', 'template.json'))
                     return True
-        self.set_message("No valid JSON file was found in the URL provided, exiting...")
+        self.set_message("No valid JSON tabula template was found in the URL provided, exiting...")
         time.sleep(5)
         sys.exit(1)
            
