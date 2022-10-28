@@ -7,6 +7,7 @@ download the resulting CSVs as a zip file.
 
 import os
 import sys
+import time
 import fnmatch
 import zipfile
 import subprocess
@@ -20,49 +21,30 @@ class Tabula(AddOn):
     """A tabula PDF table extraction Add-On for DocumentCloud"""
 
     def fetch_template(self, url):
-        """Fetch the template from either Dropbox, Google Drive, or any public URL"""
+        """Fetch the template from either Dropbox or Google Drive"""
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
         if(grab(url, "./out/")):
             for file in os.listdir('./out/'):
                 if fnmatch.fnmatch(file, '*.json'):
-                   template_path = os.path.join('./out/', file)
-                   os.rename(template_path, os.path.join('./out/', 'template.json'))
-                   return True
-            self.set_message("No JSON tabula template was found in the provided link, exiting.")
-            return False
-
-        else:
-            parsed_url = urlparse(url)
-            basename = os.path.basename(parsed_url.path)
-            title, ext = os.path.splitext(basename)
-            if not title:
-                title = "template"
-            if not ext:
-                ext = "json"
-            with requests.get(url, stream=True, timeout=10) as resp:
-                if resp.status_code == 200:
-                    with open("./out/template.json", "wb") as json_file:
-                        for chunk in resp.iter_content(chunk_size=8192):
-                            json_file.write(chunk)
+                    template_path = os.path.join('./out/', file)
+                    os.rename(template_path, os.path.join('./out/', 'template.json'))
                     return True
-                else:
-                    self.set_message("No JSON tabula template was found in the provided link, exiting.")
-                    return False
+        self.set_message("No valid JSON file was found in the URL provided, exiting...")
+        time.sleep(5)
+        sys.exit(1)
            
     def template_based_extract(self, url):
-        if(self.fetch_template(url)):
-            with zipfile.ZipFile("export.zip", mode="w") as archive:
-                for document in self.get_documents():
-                    with open("file.pdf", "wb") as pdf_file:
-                        pdf_file.write(document.pdf)
-                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json") 
-                    # Tabula's read_pdf_with_template() returns a list of data frames we can append to form a CSV. 
-                    for data_frame in data_frame_list:
-                        data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
-                    archive.write(f"{document.slug}.csv")
-        else:
-            sys.exit(1)
-    
+        self.fetch_template(url)
+        with zipfile.ZipFile("export.zip", mode="w") as archive:
+            for document in self.get_documents():
+                with open("file.pdf", "wb") as pdf_file:
+                    pdf_file.write(document.pdf)
+                data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json") 
+                # Tabula's read_pdf_with_template() returns a list of data frames we can append to form a CSV. 
+                for data_frame in data_frame_list:
+                    data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
+                archive.write(f"{document.slug}.csv")
+ 
     def template_less_extract(self):
         with zipfile.ZipFile("export.zip", mode="w") as archive:
             for document in self.get_documents():
