@@ -29,7 +29,8 @@ class Tabula(AddOn):
                    os.rename(template_path, os.path.join('./out/', 'template.json'))
                    return True
             self.set_message("No JSON tabula template was found in the provided link, exiting.")
-           
+            return False
+
         else:
             parsed_url = urlparse(url)
             basename = os.path.basename(parsed_url.path)
