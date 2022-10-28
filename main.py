@@ -33,7 +33,13 @@ class Tabula(AddOn):
             if resp.status_code == 200:
                 with open("./out/template.json", "w") as json_file:
                     json_file.write(resp.text)
+                    try:
+                        json.loads(resp.text)
+                    except ValueError as e:
+                        self.set_message("No valid JSON tabula template was found in the URL provided, exiting...")
+                        sys.exit(1)
                 return True
+            
         self.set_message("No valid JSON tabula template was found in the URL provided, exiting...")
         sys.exit(1)
 
@@ -79,7 +85,7 @@ class Tabula(AddOn):
         else:
             self.template_based_extract(url)
         self.upload_file(open("export.zip"))
-        shutil.removetree("./out")
+        shutil.rmtree("./out")
 
 if __name__ == "__main__":
     Tabula().main()
