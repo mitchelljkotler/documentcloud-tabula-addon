@@ -1,5 +1,5 @@
 title: Tabula Spreadsheet Extraction
-description: Have a PDF that used to be a spreadsheet? This Add-On runs the open source [Tabula library](https://tabula.technology) against a selected PDF and tries to identify and extract any spreadsheets it identifies. You can provide a Tabula template you've generated already to run against the documents. 
+description: Have a PDF with embedded tables? This Add-On runs the open source [Tabula library](https://tabula.technology) against a selected PDF and tries to identify and extract any tables. You can provide a Google Drive or Dropbox URL to a Tabula template you have generated already to run against the documents. 
 type: object
 documents:
   - selected
