@@ -40,6 +40,7 @@ class Tabula(AddOn):
 
     def template_based_extract(self, url):
         """This will run tabula's extraction with a template you provided"""
+        self.fetch_template(url)
         with zipfile.ZipFile("export.zip", mode="w") as archive:
             for document in self.get_documents():
                 with open("file.pdf", "wb") as pdf_file:
