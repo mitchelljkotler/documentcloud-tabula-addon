@@ -8,6 +8,7 @@ download the resulting CSVs as a zip file.
 import os
 import sys
 import fnmatch
+import shutil
 import zipfile
 import requests
 import tabula
@@ -21,6 +22,7 @@ class Tabula(AddOn):
         """Fetch the template from either Dropbox or Google Drive"""
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
         downloaded = grab(url, "./out/")
+        print(downloaded)
         if downloaded:
             for file in os.listdir("./out/"):
                 if fnmatch.fnmatch(file, "*.json"):
@@ -38,20 +40,16 @@ class Tabula(AddOn):
 
     def template_based_extract(self, url):
         """This will run tabula's extraction with a template you provided"""
-        if(self.fetch_template(url)):
-            with zipfile.ZipFile("export.zip", mode="w") as archive:
-                for document in self.get_documents():
-                    with open("file.pdf", "wb") as pdf_file:
-                        pdf_file.write(document.pdf)
-                    data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
-                    # Tabula's read_pdf_with_template() returns data frame list to append to CSV
-                    for data_frame in data_frame_list:
-                        data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
-                    archive.write(f"{document.slug}.csv")
-       else:
-            self.set_message("No valid JSON tabula template was found in the URL provided, exiting...")
-            sys.exit(1)
-
+        with zipfile.ZipFile("export.zip", mode="w") as archive:
+            for document in self.get_documents():
+                with open("file.pdf", "wb") as pdf_file:
+                    pdf_file.write(document.pdf)
+                data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
+                # Tabula's read_pdf_with_template() returns data frame list to append to CSV
+                for data_frame in data_frame_list:
+                    data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
+                archive.write(f"{document.slug}.csv")
+                    
     def template_less_extract(self):
         """If no template is provided, tabula will guess the boundaries of the tables"""
         with zipfile.ZipFile("export.zip", mode="w") as archive:
@@ -81,7 +79,7 @@ class Tabula(AddOn):
         else:
             self.template_based_extract(url)
         self.upload_file(open("export.zip"))
-
+        shutil.removetree("./out")
 
 if __name__ == "__main__":
     Tabula().main()
