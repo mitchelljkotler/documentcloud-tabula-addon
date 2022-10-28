@@ -9,6 +9,7 @@ import os
 import sys
 import fnmatch
 import zipfile
+import requests
 import tabula
 from documentcloud.addon import AddOn
 from clouddl import grab
