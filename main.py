@@ -28,6 +28,8 @@ class Tabula(AddOn):
                    template_path = os.path.join('./out/', file)
                    os.rename(template_path, os.path.join('./out/', 'template.json'))
                    return True
+            self.set_message("No JSON tabula template was found in the provided link, exiting.")
+           
         else:
             parsed_url = urlparse(url)
             basename = os.path.basename(parsed_url.path)
@@ -43,6 +45,7 @@ class Tabula(AddOn):
                             json_file.write(chunk)
                     return True
                 else:
+                    self.set_message("No JSON tabula template was found in the provided link, exiting.")
                     return False
            
     def template_based_extract(self, url):
@@ -57,7 +60,7 @@ class Tabula(AddOn):
                         data_frame.to_csv(f"{document.slug}.csv", mode="a", index=False, header=False)
                     archive.write(f"{document.slug}.csv")
         else:
-            self.template_less_extract()
+            sys.exit(1)
     
     def template_less_extract(self):
         with zipfile.ZipFile("export.zip", mode="w") as archive:
@@ -75,16 +78,12 @@ class Tabula(AddOn):
         a zip file of all the CSVs. If no template is provided, it guesses
         the boundaries for each file
         """
-        try:
-            url = self.data["url"]
-        except Exception as exc:
-            url = None
-
-        if url is not None:
-            self.template_based_extract(url)
-        else:
+       
+        url = self.data.get("url")
+        if url is None:
             self.template_less_extract()
-        
+        else:
+            self.template_based_extract(url)
         self.upload_file(open("export.zip"))
 
 if __name__ == "__main__":
