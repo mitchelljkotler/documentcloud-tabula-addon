@@ -8,7 +8,6 @@ download the resulting CSVs as a zip file.
 import os
 import sys
 import fnmatch
-import shutil
 import zipfile
 import requests
 import tabula
@@ -85,7 +84,6 @@ class Tabula(AddOn):
         else:
             self.template_based_extract(url)
         self.upload_file(open("export.zip"))
-        shutil.rmtree("./out")
 
 if __name__ == "__main__":
     Tabula().main()
