@@ -9,3 +9,4 @@ properties:
     title: URL of tabula template
     type: string
     format: uri
+version: 2
