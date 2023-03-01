@@ -22,6 +22,10 @@ class Tabula(SoftTimeOutAddOn):
 
     soft_time_limit = 5
 
+    def __init__(self):
+        super().__init__()
+        self.timed_out = False
+
     def fetch_template(self, url):
         """Fetch the template from either Dropbox or Google Drive"""
         os.makedirs(os.path.dirname("./out/"), exist_ok=True)
@@ -52,6 +56,7 @@ class Tabula(SoftTimeOutAddOn):
         self.fetch_template(url)
         with zipfile.ZipFile("export.zip", mode="a") as archive:
             for document in self.get_documents():
+                print("document", document.title)
                 with open("file.pdf", "wb") as pdf_file:
                     pdf_file.write(document.pdf)
                 data_frame_list = tabula.read_pdf_with_template("./file.pdf", "./out/template.json")
@@ -64,6 +69,7 @@ class Tabula(SoftTimeOutAddOn):
         """If no template is provided, tabula will guess the boundaries of the tables"""
         with zipfile.ZipFile("export.zip", mode="a") as archive:
             for document in self.get_documents():
+                print("document", document.title)
                 with open("file.pdf", "wb") as pdf_file:
                     pdf_file.write(document.pdf)
                 tabula.convert_into(
@@ -77,12 +83,16 @@ class Tabula(SoftTimeOutAddOn):
 
     def cleanup(self):
         """Move export.zip into the cache directory so it is available upon restart"""
+        print("cleanup")
         os.renames("export.zip", "cache/export.zip")
+        self.timed_out = True
 
     def restore(self):
         """If we have a cache zip file, move it to the current directory
         to add more files"""
+        print("restore")
         if os.path.exists("cache/export.zip"):
+            print("restoring!")
             os.renames("cache/export.zip", "export.zip")
 
     def main(self):
@@ -100,7 +110,9 @@ class Tabula(SoftTimeOutAddOn):
             self.template_less_extract()
         else:
             self.template_based_extract(url)
-        self.upload_file(open("export.zip"))
+
+        if not self.timed_out:
+            self.upload_file(open("export.zip"))
 
 if __name__ == "__main__":
     Tabula().main()
