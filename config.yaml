@@ -1,4 +1,4 @@
-title: Tabula Spreadsheet Extraction
+title: Tabula Spreadsheet Extraction (with soft timeout)
 description: Have a PDF with embedded tables? This Add-On runs the open source [Tabula library](https://tabula.technology) against a selected PDF and tries to identify and extract any tables. You can provide a Google Drive or Dropbox URL to a Tabula template you have generated already to run against the documents. If no template is provided, tabula will try to guess the boundaries of the tables within the document. 
 type: object
 documents:

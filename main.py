@@ -5,17 +5,22 @@ It allows you to export tables from a set of PDFs into CSVs and
 download the resulting CSVs as a zip file.
 """
 
+import fnmatch
 import os
 import sys
-import fnmatch
 import zipfile
+
 import requests
+from documentcloud.addon import SoftTimeOutAddOn
+
 import tabula
-from documentcloud.addon import AddOn
 from clouddl import grab
 
-class Tabula(AddOn):
+
+class Tabula(SoftTimeOutAddOn):
     """A tabula PDF table extraction Add-On for DocumentCloud"""
+
+    soft_time_limit = 5
 
     def fetch_template(self, url):
         """Fetch the template from either Dropbox or Google Drive"""
@@ -45,7 +50,7 @@ class Tabula(AddOn):
     def template_based_extract(self, url):
         """This will run tabula's extraction with a template you provided"""
         self.fetch_template(url)
-        with zipfile.ZipFile("export.zip", mode="w") as archive:
+        with zipfile.ZipFile("export.zip", mode="a") as archive:
             for document in self.get_documents():
                 with open("file.pdf", "wb") as pdf_file:
                     pdf_file.write(document.pdf)
@@ -57,7 +62,7 @@ class Tabula(AddOn):
                     
     def template_less_extract(self):
         """If no template is provided, tabula will guess the boundaries of the tables"""
-        with zipfile.ZipFile("export.zip", mode="w") as archive:
+        with zipfile.ZipFile("export.zip", mode="a") as archive:
             for document in self.get_documents():
                 with open("file.pdf", "wb") as pdf_file:
                     pdf_file.write(document.pdf)
@@ -70,6 +75,16 @@ class Tabula(AddOn):
                 # Tabula's convert_into() guesses boundaries for table extraction.
                 archive.write(f"{document.slug}.csv")
 
+    def cleanup(self):
+        """Move export.zip into the cache directory so it is available upon restart"""
+        os.renames("export.zip", "cache/export.zip")
+
+    def restore(self):
+        """If we have a cache zip file, move it to the current directory
+        to add more files"""
+        if os.path.exists("cache/export.zip"):
+            os.renames("cache/export.zip", "export.zip")
+
     def main(self):
         """
         If a template is provided, it extracts dataframes from the PDF(s)
@@ -77,6 +92,8 @@ class Tabula(AddOn):
         a zip file of all the CSVs. If no template is provided, it guesses
         the boundaries for each file
         """
+
+        self.restore()
 
         url = self.data.get("url")
         if url is None:
